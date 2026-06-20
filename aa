@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samimiyat va Kelajak Testi | Premium Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 antialiased text-slate-200">
+
+    <div id="quiz-container" class="bg-slate-900/80 backdrop-blur-xl p-8 rounded-3xl border border-slate-800 shadow-2xl max-w-xl w-full neon-glow transition-all duration-500">
+        
+        <!-- INTRO SCREEN -->
+        <div id="intro-screen" class="text-center py-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-500/10 text-red-500 text-3xl mb-6 border border-red-500/20">
+                ❤️
+            </div>
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-100 to-slate-400 mb-4 tracking-tight">Samimiyat Testi</h1>
+            <p class="text-slate-400 mb-8 leading-relaxed text-sm sm:text-base px-2">
+                Bu oddiy test emas. Bu yerda bizning kelajagimiz, qarashlarimiz va bir-birimizga bo'lgan munosabatimizga oid eng muhim savollar jamlangan. Har biriga chin dildan javob berishingni xohlayman.
+            </p>
+            <button onclick="startQuiz()" class="w-full sm:w-auto bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold py-3.5 px-10 rounded-xl transition-all shadow-lg shadow-red-500/20 hover:shadow-red-500/30 transform hover:-translate-y-0.5">
+                Testni boshlash
+            </button>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div id="question-screen" class="hidden">
+            <div class="flex items-center justify-between gap-4 mb-8">
+                <span id="progress" class="text-red-400 font-bold text-xs uppercase tracking-widest min-w-[90px]">SAVOL: 1 / 20</span>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-red-500 to-rose-500 h-full transition-all duration-300" style="width: 5%"></div>
+                </div>
+            </div>
+            
+            <h2 id="question-text" class="text-lg sm:text-xl font-medium text-slate-100 mb-8 leading-relaxed min-h-[56px]">
+                Yuklanmoqda...
+            </h2>
+            
+            <div id="options" class="space-y-3.5">
+                <!-- Buttons injected here -->
+            </div>
+            
+            <div class="mt-8 pt-4 border-t border-slate-800/60 text-right">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-slate-800 text-slate-200 py-2.5 px-6 rounded-xl hover:bg-slate-700 hover:text-white transition-all text-sm font-medium border border-slate-700/50">
+                    Keyingi savol &rarr;
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="hidden text-center py-4">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500/10 text-emerald-400 text-2xl mb-4">
+                ✓
+            </div>
+            <h2 class="text-2xl font-bold text-slate-100 mb-2">Rahmat! ✨</h2>
+            <p class="text-slate-400 text-sm mb-6 px-4">Barcha savollarga samimiy javob berganing uchun rahmat. Endi bu natijalarni birgalikda tahlil qilishimiz mumkin.</p>
+            
+            <div id="summary" class="text-left bg-slate-950/60 p-4 rounded-2xl max-h-80 overflow-y-auto mb-6 border border-slate-800/80 custom-scrollbar space-y-4">
+                <!-- Summary cards injected here -->
+            </div>
+            
+            <button onclick="location.reload()" class="text-slate-500 hover:text-slate-400 text-xs font-medium transition-colors">
+                Testni qaytadan boshlash
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "Agar ota-onang bizning munosabatimizga keskin qarshi bo'lishse, nima qilgan bo'larding?", options: ["Ular aytganini qilaman", "Ular bilan tushuntirib bo'lsa ham seni tanlayman", "Murosa yo'lini qidiraman", "Vaqtga qo'yib beraman"] },
+            { q: "Sen uchun 'xiyonat' deganda aynan nima tushuniladi?", options: ["Faqat boshqasi bilan gaplashish", "Yashirin uchrashuvlar", "Hissiy bog'lanib qolish (his-tuyg'u)", "Barcha sirlarni boshqaga aytish"] },
+            { q: "Oilada pulni kim boshqarishi kerak deb o'ylaysan?", options: ["Faqat erkak kishi", "Faqat ayol kishi", "Ikkalamiz maslahatlashib", "Har kim o'z pulini o'zi"] },
+            { q: "Mening qaysi fe'l-atvorim seni ko'proq jahlingni chiqaradi?", options: ["Qaysarligim", "Hamma gapni ochiq aytishim", "Ba'zan e'tiborsizligim", "Boshqa jihatim..."] },
+            { q: "Agar men qiyin moliyaviy ahvolga tushib qolsam, sen nima qilarding?", options: ["Vaqtinchalik kutaman", "Yordam berib birga yengamiz", "Allohga tavakkal qilib sabr qilamiz", "Munosabatlarni qayta ko'rib chiqaman"] },
+            { q: "Baxtli oila qurish uchun eng muhim uchta narsa nima?", options: ["Sevgi, Pul, Omad", "Ishonch, Hurmat, Sabr", "Erkinlik, Kulgu, Do'stlik", "Go'zallik, Tarbiya, Boylik"] },
+            { q: "Agar biz boshqa davlatga ko'chishimiz kerak bo'lsa, rozi bo'larmiding?", options: ["Hech qachon", "Sen bilan hamma joyga boraman", "Faqat sharoit yaxshi bo'lsa", "Oila a'zolarim ruxsat bersa"] },
+            { q: "Kelajakda ishlashingga qarshilik qilsam, munosabating qanday bo'ladi?", options: ["Rozi bo'laman", "Albatta ishlayman", "Murosa qilamiz", "Juda qattiq xafa bo'laman"] },
+            { q: "Senga qimmatbaho sovg'a berishim muhimmi yoki e'tiborimmi?", options: ["Faqat e'tibor", "Sovg'a ham kerak", "Har ikkalasi barobar", "Muhimi tinchlik"] },
+            { q: "Menga aytishdan qo'rqadigan biror siring bormi?", options: ["Ha, bor", "Yo'q, hammasini bilasan", "Hali aytishga erta", "Sirlar bo'lishi shart emas"] },
+            { q: "Farzandlarimiz tarbiyasida eng asosiy e'tiborni nimaga qaratishimiz kerak?", options: ["Din va odobga", "Zamonaviy bilimga", "O'zini himoya qilishga", "Erkin bo'lishiga"] },
+            { q: "Janjallashib qolganimizda birinchi bo'lib kim kechirim so'rashi kerak?", options: ["Hamma vaqt erkak kishi", "Aybdor bo'lgan odam", "Men so'rayveraman", "Kim sabrli bo'lsa o'sha"] },
+            { q: "Mening o'tmishimdagi voqealar seni qanchalik qiziqtiradi?", options: ["Juda qattiq, hammasini bilishim shart", "Umuman qiziqmas", "Faqat eng muhimlari", "O'tmish - o'tmishda qoldi"] },
+            { q: "Mening senga bo'lgan rashqim senga yoqadimi?", options: ["Ha, o'ta rashq qilganing yoqadi", "Me'yorida bo'lsa yaxshi", "Yo'q, rashq ishonchsizlik belgisi", "Menga farqi yo'q"] },
+            { q: "Agar yaqin do'stlaring men haqimda yomon gapirsa, ularga nima deysan?", options: ["Ularga qo'shilaman", "Seni himoya qilaman", "Indamay eshitaman", "Do'stlarim bilan aloqani uzaman"] },
+            { q: "Bizning fe'l-atvorimiz bir-birimizga mos deb o'ylaysanmi?", options: ["Ideal darajada", "Bir-birimizni to'ldiramiz", "Juda ko'p farqlarimiz bor", "Vaqt ko'rsatadi"] },
+            { q: "Sen uchun munosabatlardagi eng katta qo'rquv nima?", options: ["Aldanish", "Tashlab ketilish", "Sovuqlashish", "Tushunmovchilik"] },
+            { q: "Men senga yetarlicha e'tibor beryapmanmi?", options: ["Ha, judayam", "Yo'q, ko'proq xohlayman", "Ba'zan ha, ba'zan yo'q", "Gap e'tiborda emas"] },
+            { q: "Katta janjaldan keyin bizni yana nima birlashtirib turadi?", options: ["Sevgi", "Bir-birimizga bo'lgan ehtiyoj", "Kelajak rejalari", "Shunchaki ko'nikish"] },
+            { q: "O'zingni 10 yildan keyin yonimda qanday tasavvur qilasan?", options: ["Baxtli ona va rafiqa", "Muvaffaqiyatli ayol", "Oddiy uy bekasi", "Hali bu haqda o'ylamadim"] }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = [];
+
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('question-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress').innerText = `SAVOL: ${currentQuestion + 1} / 20`;
+            document.getElementById('progress-bar').style.width = `${((currentQuestion + 1) / 20) * 100}%`;
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 bg-slate-800/40 border border-slate-800 rounded-xl hover:border-red-500/50 hover:bg-red-500/5 text-slate-300 hover:text-white transition-all duration-200 focus:outline-none text-sm font-medium";
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(opt);
+                optionsDiv.appendChild(btn);
+            });
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function selectOption(opt) {
+            userAnswers[currentQuestion] = opt;
+            const buttons = document.querySelectorAll('#options button');
+            buttons.forEach(b => {
+                if(b.innerText === opt) {
+                    b.className = "w-full text-left p-4 bg-red-500/10 border-2 border-red-500 rounded-xl text-red-400 font-medium transition-all duration-200 focus:outline-none text-sm";
+                } else {
+                    b.className = "w-full text-left p-4 bg-slate-800/40 border border-slate-800 rounded-xl text-slate-500 transition-all duration-200 focus:outline-none text-sm opacity-50";
+                }
+            });
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('question-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            const summary = document.getElementById('summary');
+            let html = '';
+            questions.forEach((q, index) => {
+                html += `
+                    <div class="border-b border-slate-800/80 pb-3 last:border-none last:pb-0">
+                        <p class="text-xs text-slate-500 mb-1">Savol ${index + 1}</p>
+                        <p class="text-sm text-slate-200 font-medium mb-1.5">${q.q}</p>
+                        <p class="text-sm text-red-400 bg-red-500/5 inline-block px-2.5 py-1 rounded-md border border-red-500/10">Javob: ${userAnswers[index]}</p>
+                    </div>
+                `;
+            });
+            summary.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
